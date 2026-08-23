@@ -1,0 +1,23 @@
+
+server:
+  port: 8093
+
+spring:
+  application:
+    name: microservice-clientes
+
+  datasource:
+    url: jdbc:mysql://localhost:3308/gasmanager_curso_clientes?useSSL=false&serverTimezone=America/Mexico_City&allowPublicKeyRetrieval=true
+    username: root
+    password: 12345
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+eureka:
+  client:
+    server-url:
+      defaultZone: http://localhost:8761/eureka/doc
