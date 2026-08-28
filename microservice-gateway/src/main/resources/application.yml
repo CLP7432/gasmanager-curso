@@ -1,0 +1,38 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: microservice-gateway
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: msvc-clientes
+          uri: lb://microservice-clientes
+          predicates:
+            - Path=/api/clientes/**,/api/creditos/**,/api/admin-clientes/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    instance-id: gateway
+
+logging:
+  level:
+    org.springframework.cloud.gateway: WARN
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
