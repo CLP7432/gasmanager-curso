@@ -6,6 +6,8 @@ import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "clientes")
@@ -73,11 +75,22 @@ public class Cliente {
     @Column(name = "activo")
     private Boolean activo = true;
 
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Credito> creditos = new ArrayList<>();
+
     @Column(name = "updated_at")
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-
+    public void addCredito(Credito credito){
+        creditos.add(credito);
+        credito.setCliente(this);
+    }
+    public void removeCredito(Credito credito){
+        creditos.remove(credito);
+        credito.setCliente(null);
+    }
 
 
 }
