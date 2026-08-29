@@ -1,7 +1,9 @@
 package com.gasmanager.users.services;
 
+import com.gasmanager.users.entities.Rol;
 import com.gasmanager.users.entities.Usuario;
 import com.gasmanager.users.enums.EstadoUsuario;
+import com.gasmanager.users.repositories.RolRepository;
 import com.gasmanager.users.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,11 +21,17 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final RolRepository rolRepository;
 
     //Crear
     public Usuario crearUsuario(Usuario usuario){
         if(usuarioRepository.existsByCorreo(usuario.getCorreo())){
             throw new IllegalArgumentException("El correo ya esta registrado");
+        }
+        if(usuario.getRol() != null && usuario.getRol().getId() != null){
+            Rol rolDB = rolRepository.findById(usuario.getRol().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Rol no existe"));
+            usuario.setRol(rolDB);
         }
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         usuario.setEstado(EstadoUsuario.ACTIVO);
