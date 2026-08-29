@@ -20,7 +20,7 @@ spring:
         - id: msvc-users
           uri: lb://microservice-users
           predicates:
-            - Path=/api/usuarios/**,/api/roles/**,/api/permisos/**
+            - Path=/api/usuarios/**,/api/roles/**,/api/permisos/**,/api/auditorias/**
 
 
 eureka:
