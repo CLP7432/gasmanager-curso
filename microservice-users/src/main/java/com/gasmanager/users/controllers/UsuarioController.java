@@ -61,6 +61,23 @@ public class UsuarioController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PostMapping("/{id}/reset-password")
+    public ResponseEntity<?> resetPassword(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> req){
+        String nuevaPassword = req.get("nuevaPassword");
+        if(nuevaPassword == null || nuevaPassword.length() < 6){
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "La contrasela debe tener al menos 6 caracteres"));
+        }
+        boolean ok = usuarioService.desbloquearYResetearPassword(id, nuevaPassword);
+        if(ok){
+            return ResponseEntity.ok(Map.of("mensaje", "Contraseña restablecida y usuario desbloqueado"));
+        }else{
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, String>> handleDuplicate(IllegalArgumentException ex){
         return ResponseEntity.status(HttpStatus.CONFLICT)

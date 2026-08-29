@@ -26,7 +26,7 @@ public class UsuarioService {
     //Crear
     public Usuario crearUsuario(Usuario usuario){
         if(usuarioRepository.existsByCorreo(usuario.getCorreo())){
-            throw new IllegalArgumentException("El correo ya esta registrado");
+            throw new IllegalArgumentException("El correo ya está registrado");
         }
         if(usuario.getRol() != null && usuario.getRol().getId() != null){
             Rol rolDB = rolRepository.findById(usuario.getRol().getId())
@@ -73,5 +73,24 @@ public class UsuarioService {
             usuarioRepository.save(u);
             return Optional.empty();
         }
+    }
+    public boolean desbloquearYResetearPassword(Long idUsuario, String nuevaPassword){
+        Optional<Usuario> opt = usuarioRepository.findById(idUsuario);
+
+        if(opt.isEmpty()) return false;
+
+        Usuario u = opt.get();
+        u.setPassword(passwordEncoder.encode(nuevaPassword));
+        u.setBloqueado(false);
+        u.setIntentosFallidos(0);
+        u.setEstado(EstadoUsuario.ACTIVO);
+        u.setActivo(true);
+        usuarioRepository.save(u);
+        return true;
+    }
+    public boolean requiereResetPassword(String correo){
+        return usuarioRepository.findByCorreo(correo)
+                .map(u -> Boolean.TRUE.equals(u.getBloqueado()) && u.getIntentosFallidos() >= 3)
+                .orElse(false);
     }
 }
