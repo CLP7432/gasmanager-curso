@@ -37,7 +37,7 @@ public class UsuarioController {
                             u.getRol().getNombreRol()
                     );
                     sesionService.iniciarSesion(u.getId(), token);
-                    
+
                     return ResponseEntity.ok(new LoginResponse(
                             token, u.getRol().getNombreRol(), u.getId(), u.getCorreo()
                     ));
@@ -53,11 +53,18 @@ public class UsuarioController {
     public ResponseEntity<List<Usuario>> listar(){
         return ResponseEntity.ok(usuarioService.listarTodos());
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> obtener(@PathVariable Long id){
         return usuarioService.obtenerPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleDuplicate(IllegalArgumentException ex){
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of("error", ex.getMessage()));
     }
 
 }
