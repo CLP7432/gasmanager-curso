@@ -4,6 +4,7 @@ import com.gasmanager.users.dto.LoginRequest;
 import com.gasmanager.users.dto.LoginResponse;
 import com.gasmanager.users.entities.Usuario;
 import com.gasmanager.users.security.JwtTokenProvider;
+import com.gasmanager.users.services.SesionService;
 import com.gasmanager.users.services.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ public class UsuarioController {
 
     private final UsuarioService usuarioService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final SesionService sesionService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login (@RequestBody LoginRequest req){
@@ -34,6 +36,8 @@ public class UsuarioController {
                             u.getCorreo(),
                             u.getRol().getNombreRol()
                     );
+                    sesionService.iniciarSesion(u.getId(), token);
+                    
                     return ResponseEntity.ok(new LoginResponse(
                             token, u.getRol().getNombreRol(), u.getId(), u.getCorreo()
                     ));
