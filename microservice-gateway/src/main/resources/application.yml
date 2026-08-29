@@ -17,6 +17,12 @@ spring:
           predicates:
             - Path=/api/clientes/**,/api/creditos/**,/api/admin-clientes/**
 
+        - id: msvc-users
+          uri: lb://microservice-users
+          predicates:
+            - Path=/api/usuarios/**,/api/roles/**,/api/permisos/**
+
+
 eureka:
   client:
     service-url:

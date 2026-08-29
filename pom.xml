@@ -20,6 +20,7 @@
         <module>microservice-eureka</module>
         <module>microservice-clientes</module>
         <module>microservice-gateway</module>
+        <module>microservice-users</module>
     </modules>
 
     <properties>
