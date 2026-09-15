@@ -33,4 +33,8 @@ public class AuditoriaService {
     public List<AuditoriaAccion> listarPorUsuario(Long idUsuario){
         return auditoriaRepository.findByIdUsuarioEjecutor(idUsuario);
     }
+
+    public List<AuditoriaAccion> listarPorRango(LocalDateTime inicio, LocalDateTime fin){
+        return auditoriaRepository.findByFechaHoraBetween(inicio, fin);
+    }
 }

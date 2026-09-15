@@ -21,6 +21,12 @@
         <module>microservice-clientes</module>
         <module>microservice-gateway</module>
         <module>microservice-users</module>
+        <module>microservice-inventarios</module>
+        <module>microservice-ventas</module>
+        <module>microservice-nomina</module>
+        <module>microservice-facturacion</module>
+        <module>microservice-ia</module>
+        <module>microservice-lealtad</module>
     </modules>
 
     <properties>

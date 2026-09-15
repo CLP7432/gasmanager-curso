@@ -1,0 +1,46 @@
+server:
+  port: 8097
+
+spring:
+  application:
+    name: microservice-ia
+
+ollama:
+  url: ${OLLAMA_URL:http://localhost:11434}
+  model: ${OLLAMA_MODEL:qwen2.5-coder:7b}
+  timeout: 120000
+
+microservicio:
+  ventas:
+    url: ${MSVC_VENTAS_URL:http://localhost:8095}
+  clientes:
+    url: ${MSVC_CLIENTES_URL:http://localhost:8093}
+  inventarios:
+    url: ${MSVC_INVENTARIOS_URL:http://localhost:8094}
+  nomina:
+    url: ${MSVC_NOMINA_URL:http://localhost:8096}
+  facturacion:
+    url: ${MSVC_FACTURACION_URL:http://localhost:8092}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+
+logging:
+  level:
+    com.gasmanager.ia: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always

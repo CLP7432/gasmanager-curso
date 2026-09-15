@@ -1,0 +1,57 @@
+server:
+  port: 8092
+
+spring:
+  application:
+    name: microservice-facturacion
+
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3308}/gasmanager_facturacion?useSSL=false&serverTimezone=America/Mexico_City&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:12345}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+
+facturacion:
+  emisor:
+    rfc: "GAM850101AAA"
+    razon-social: "Gasolinera de Prueba S.A. de C.V."
+    regimen-fiscal: "601"
+    codigo-postal: "76000"
+  cfdi:
+    serie: "FAC"
+    forma-pago-por-defecto: "01"
+    metodo-pago-por-defecto: "PUE"
+    simulacion: true
+    iva-tasa: 0.16
+    ieps-tasa: 0.00
+    uso-cfdi-por-defecto: "G01"
+    complemento-hidrocarburos-habilitado: false
+    claves:
+      clave-prod-serv-regular: "15101514"
+      clave-prod-serv-premium: "15101515"
+      clave-prod-serv-diesel: "15101505"
+      clave-prod-serv-aceite: "15111515"
+      clave-unidad-litro: "LTR"
+      clave-unidad-pieza: "H87"
+    hidrocarburos:
+      version: "1.1"
+      tipo-operacion: "02"
+      tipo-servicio: "06"
+      clave-instalacion: "06"
+      numero-permiso: "PL/12345/EXP/ES/2025"
+    documentos:
+      ruta: "facturadas"
+
+logging:
+  level:
+    com.gasmanager.facturacion.clients: DEBUG

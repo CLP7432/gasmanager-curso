@@ -29,6 +29,9 @@ public class Cliente {
     @Enumerated(EnumType.STRING)
     private TipoPersona tipoPersona;
 
+    @Column(name = "nombre", length = 120)
+    private String nombre;
+
     @Column(name = "razon_social", length = 150)
     private String razonSocial;
 

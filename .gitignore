@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Generados locales
+facturadas/
+*.rar
+.env

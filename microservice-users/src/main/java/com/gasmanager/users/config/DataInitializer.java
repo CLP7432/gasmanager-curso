@@ -33,16 +33,12 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         if(!initialDataEnabled) return;
 
-        if(usuarioRepository.count() > 0){
-            System.out.println("======YA EXISTEN USUARIOS - NO SE INICIALIZA=====");
-            return;
-        }
         System.out.println("=====INICIALIZANDO DATOS=====");
         crearPermisos();
         crearRoles();
         crearAdmin();
 
-        System.out.println("=====ADMIN CREADO admin@gasmanager.com / Cambiami123! ===");
+        System.out.println("=====INICIALIZACION COMPLETADA ===");
     }
     private void crearPermisos(){
         if(permisoRepository.count() > 0) return;
@@ -54,7 +50,8 @@ public class DataInitializer implements CommandLineRunner {
                 new Permiso("USUARIO_ELIMINAR", "Eliminar Usuario", "Permite desactivar"),
                 new Permiso("ROL_CREAR", "Crear Rol", "Permite crear roles"),
                 new Permiso("ROL_LEER", "Leer Rol", "Permite ver roles"),
-                new Permiso("AUDITORIA_LEER", "Leer Auditoria", "Permite ver auditoria")
+                new Permiso("AUDITORIA_LEER", "Leer Auditoria", "Permite ver auditoria"),
+                new Permiso("NOMINA_VER", "Ver Nomina", "Permite ver el modulo de nomina")
         };
         for(Permiso p : permisos){
             permisoRepository.save(p);
@@ -75,6 +72,9 @@ public class DataInitializer implements CommandLineRunner {
         System.out.println("Rol USUARIO");
     }
     private void crearAdmin(){
+
+        if(usuarioRepository.existsByCorreo("admin@gasmanager.com")) return;
+
         Rol adminRol = rolRepository.findByNombreRol("ADMIN")
                 .orElseThrow(() -> new RuntimeException("No ADMIN"));
         Usuario admin = new Usuario();

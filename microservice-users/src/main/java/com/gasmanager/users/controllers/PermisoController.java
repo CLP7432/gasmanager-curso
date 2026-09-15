@@ -19,16 +19,24 @@ public class PermisoController {
     public Permiso crear(@RequestBody Permiso permiso){
         return permisoService.crearPermiso(permiso);
     }
+
     @GetMapping
     public List<Permiso> listar(){
         return permisoService.listarPermisos();
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<Permiso> obtener(@PathVariable Long id){
         return permisoService.obtenerPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Permiso> actualizar(@PathVariable Long id, @RequestBody Permiso permiso){
+        return ResponseEntity.ok(permisoService.actualizarPermiso(id, permiso));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id){
         return permisoService.eliminarPermiso(id)

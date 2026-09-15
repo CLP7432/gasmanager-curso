@@ -28,6 +28,22 @@ public class ClienteController {
         return ResponseEntity.ok(clienteService.listarClientes());
     }
 
+    @GetMapping("/activos")
+    public ResponseEntity<List<ClienteDTO>> listarActivos(){
+        return ResponseEntity.ok(clienteService.listarActivos());
+    }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<List<ClienteDTO>> buscarPorRazonSocial(@RequestParam String razonSocial){
+        return ResponseEntity.ok(clienteService.buscarPorRazonSocial(razonSocial));
+    }
+
+    @GetMapping("/rfc/{rfc}")
+    public ResponseEntity<ClienteDTO> obtenerPorRFC(@PathVariable String rfc){
+        return ResponseEntity.ok(clienteService.obtenerPorRFC(rfc));
+    }
+
+
     @GetMapping("/{id}")
     public ResponseEntity<ClienteDTO> obtener(@PathVariable Long id) {
         return ResponseEntity.ok(clienteService.obtenerCliente(id));
@@ -36,6 +52,11 @@ public class ClienteController {
     @PutMapping("/{id}")
     public ResponseEntity<ClienteDTO> actualizar(@PathVariable Long id, @Valid @RequestBody ClienteDTO dto) {
         return ResponseEntity.ok(clienteService.actualizarCliente(id, dto));
+    }
+
+    @PatchMapping("/{id}/toggle")
+    public ResponseEntity<ClienteDTO> toggleActivo(@PathVariable Long id){
+        return ResponseEntity.ok(clienteService.toggleActivo(id));
     }
 
     @DeleteMapping("/{id}")

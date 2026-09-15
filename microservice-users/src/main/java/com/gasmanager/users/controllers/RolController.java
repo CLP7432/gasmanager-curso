@@ -32,6 +32,21 @@ public class RolController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+    @GetMapping("/activos")
+    public ResponseEntity<List<Rol>> listarActivos(){
+        return ResponseEntity.ok(rolService.listarRolesActivos());
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Rol> actualizar(@PathVariable Long id, @RequestBody Rol rol){
+        return ResponseEntity.ok(rolService.actualizarRol(id, rol));
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id){
+        return rolService.eliminarRol(id)
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.notFound().build();
+    }
 
     @PostMapping("/{id}/permisos")
     public ResponseEntity<Rol> asignarPermiso(

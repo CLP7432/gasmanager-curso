@@ -90,6 +90,10 @@ public class Credito {
     @Builder.Default
     private List<AbonoCredito> abonos = new ArrayList<>();
 
+    @OneToMany(mappedBy = "credito")
+    @Builder.Default
+    private List<NotaCredito> notasCredito = new ArrayList<>();
+
     //SE EJECUTA ANTES DE GUARDAR
     @PrePersist
     protected void onCreate(){
@@ -116,10 +120,6 @@ public class Credito {
 
         saldoPendiente = saldoPendiente.subtract(abono.getMonto());
         fechaUltimoPago = abono.getFechaAbono();
-
-        if(saldoPendiente.compareTo(BigDecimal.ZERO) <= 0){
-            estado = EstadoCredito.PAGADO;
-        }
     }
     public void removeAbono(AbonoCredito abono){
         abonos.remove(abono);

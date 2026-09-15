@@ -15,18 +15,70 @@ spring:
         - id: msvc-clientes
           uri: lb://microservice-clientes
           predicates:
-            - Path=/api/clientes/**,/api/creditos/**,/api/admin-clientes/**
+            - Path=/api/clientes/**,/api/creditos/**,/api/admin-clientes/**,/api/notas-credito/**
 
         - id: msvc-users
           uri: lb://microservice-users
           predicates:
             - Path=/api/usuarios/**,/api/roles/**,/api/permisos/**,/api/auditorias/**
 
+        - id: msvc-inventarios
+          uri: lb://microservice-inventarios
+          predicates:
+            - Path=/api/aceites/**
+
+        - id: msvc-inventarios-combustibles
+          uri: lb://microservice-inventarios
+          predicates:
+            - Path=/api/combustibles/**
+
+        - id: msvc-inventarios-compras
+          uri: lb://microservice-inventarios
+          predicates:
+            - Path=/api/compras/**
+
+        - id: msvc-inventarios-proveedores
+          uri: lb://microservice-inventarios
+          predicates:
+            - Path=/api/proveedores/**
+
+        - id: msvc-ventas
+          uri: lb://microservice-ventas
+          predicates:
+            - Path=/api/ventas/**,/api/turnos/**,/api/dispensarios/**,/api/cortes/**,/api/surtidores-aceite/**,/api/admin/**
+
+        - id: msvc-inventarios-tanques
+          uri: lb://microservice-inventarios
+          predicates:
+            - Path=/api/tanques/**
+
+        - id: msvc-nomina
+          uri: lb://microservice-nomina
+          predicates:
+            - Path=/api/empleados/**,/api/puestos/**,/api/departamentos/**,/api/incidencias/**,/api/nominas/**
+
+        - id: msvc-facturacion
+          uri: lb://microservice-facturacion
+          predicates:
+            - Path=/api/facturas/**,/api/clientes-fiscales/**
+
+        - id: msvc-ia
+          uri: lb://microservice-ia
+          predicates:
+            - Path=/api/ia/**
+
+        - id: msvc-lealtad
+          uri: lb://microservice-lealtad
+          predicates:
+            - Path=/api/lealtad/**
+
+
+
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
     register-with-eureka: true
     fetch-registry: true
   instance:

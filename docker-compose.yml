@@ -1,0 +1,271 @@
+# GasManager producción (sin "curso"): BDs gasmanager_* con volumen persistente.
+# Uso: docker compose up -d --build | Bajar: docker compose down (el volumen conserva datos)
+services:
+  # ===== MYSQL 8 (persiste sistema + operación) =====
+  mysql8:
+    container_name: mysql8
+    image: mysql:8.0
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD:-12345}
+    volumes:
+      - gasmanager-data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d:ro
+    restart: always
+    networks:
+      - gasmanager-network
+    command: --lower_case_table_names=1
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_PASSWORD:-12345}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # ===== EUREKA =====
+  msvc-eureka:
+    container_name: msvc-eureka
+    build:
+      context: ./
+      dockerfile: ./microservice-eureka/Dockerfile
+    ports:
+      - "8761:8761"
+    environment:
+      EUREKA_URL: http://msvc-eureka:8761/eureka/
+    networks:
+      - gasmanager-network
+    restart: always
+
+  # ===== GATEWAY =====
+  msvc-gateway:
+    container_name: msvc-gateway
+    build:
+      context: ./
+      dockerfile: ./microservice-gateway/Dockerfile
+    ports:
+      - "8085:8085"
+    environment:
+      EUREKA_URL: http://msvc-eureka:8761/eureka/
+    networks:
+      - gasmanager-network
+    depends_on:
+      msvc-eureka:
+        condition: service_started
+      mysql8:
+        condition: service_healthy
+    restart: always
+
+  # ===== USERS =====
+  msvc-users:
+    container_name: msvc-users
+    build:
+      context: ./
+      dockerfile: ./microservice-users/Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      MYSQL_HOST: mysql8
+      MYSQL_PORT: 3306
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-12345}
+      EUREKA_URL: http://msvc-eureka:8761/eureka/
+    networks:
+      - gasmanager-network
+    depends_on:
+      msvc-eureka:
+        condition: service_started
+      mysql8:
+        condition: service_healthy
+    restart: always
+
+  # ===== CLIENTES =====
+  msvc-clientes:
+    container_name: msvc-clientes
+    build:
+      context: ./
+      dockerfile: ./microservice-clientes/Dockerfile
+    ports:
+      - "8093:8093"
+    environment:
+      MYSQL_HOST: mysql8
+      MYSQL_PORT: 3306
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-12345}
+      EUREKA_URL: http://msvc-eureka:8761/eureka/
+    networks:
+      - gasmanager-network
+    depends_on:
+      msvc-eureka:
+        condition: service_started
+      mysql8:
+        condition: service_healthy
+    restart: always
+
+  # ===== INVENTARIOS =====
+  msvc-inventarios:
+    container_name: msvc-inventarios
+    build:
+      context: ./
+      dockerfile: ./microservice-inventarios/Dockerfile
+    ports:
+      - "8094:8094"
+    environment:
+      MYSQL_HOST: mysql8
+      MYSQL_PORT: 3306
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-12345}
+      EUREKA_URL: http://msvc-eureka:8761/eureka/
+    networks:
+      - gasmanager-network
+    depends_on:
+      msvc-eureka:
+        condition: service_started
+      mysql8:
+        condition: service_healthy
+    restart: always
+
+  # ===== VENTAS =====
+  msvc-ventas:
+    container_name: msvc-ventas
+    build:
+      context: ./
+      dockerfile: ./microservice-ventas/Dockerfile
+    ports:
+      - "8095:8095"
+    environment:
+      MYSQL_HOST: mysql8
+      MYSQL_PORT: 3306
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-12345}
+      EUREKA_URL: http://msvc-eureka:8761/eureka/
+      MSVC_CLIENTES_URL: http://msvc-clientes:8093
+      MSVC_INVENTARIOS_URL: http://msvc-inventarios:8094
+      MSVC_NOMINA_URL: http://msvc-nomina:8096
+    networks:
+      - gasmanager-network
+    depends_on:
+      msvc-eureka:
+        condition: service_started
+      mysql8:
+        condition: service_healthy
+    restart: always
+
+  # ===== NOMINA =====
+  msvc-nomina:
+    container_name: msvc-nomina
+    build:
+      context: ./
+      dockerfile: ./microservice-nomina/Dockerfile
+    ports:
+      - "8096:8096"
+    environment:
+      MYSQL_HOST: mysql8
+      MYSQL_PORT: 3306
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-12345}
+      EUREKA_URL: http://msvc-eureka:8761/eureka/
+    networks:
+      - gasmanager-network
+    depends_on:
+      msvc-eureka:
+        condition: service_started
+      mysql8:
+        condition: service_healthy
+    restart: always
+
+  # ===== FACTURACION =====
+  msvc-facturacion:
+    container_name: msvc-facturacion
+    build:
+      context: ./
+      dockerfile: ./microservice-facturacion/Dockerfile
+    ports:
+      - "8092:8092"
+    environment:
+      MYSQL_HOST: mysql8
+      MYSQL_PORT: 3306
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-12345}
+      EUREKA_URL: http://msvc-eureka:8761/eureka/
+      MSVC_CLIENTES_URL: http://msvc-clientes:8093
+      MSVC_VENTAS_URL: http://msvc-ventas:8095
+    networks:
+      - gasmanager-network
+    depends_on:
+      msvc-eureka:
+        condition: service_started
+      mysql8:
+        condition: service_healthy
+    restart: always
+
+  # ===== LEALTAD =====
+  msvc-lealtad:
+    container_name: msvc-lealtad
+    build:
+      context: ./
+      dockerfile: ./microservice-lealtad/Dockerfile
+    ports:
+      - "8098:8098"
+    environment:
+      MYSQL_HOST: mysql8
+      MYSQL_PORT: 3306
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-12345}
+      EUREKA_URL: http://msvc-eureka:8761/eureka/
+      MSVC_VENTAS_URL: http://msvc-ventas:8095
+    networks:
+      - gasmanager-network
+    depends_on:
+      msvc-eureka:
+        condition: service_started
+      mysql8:
+        condition: service_healthy
+    restart: always
+
+  # ===== IA (Ollama queda en tu PC; el contenedor la alcanza por host) =====
+  msvc-ia:
+    container_name: msvc-ia
+    build:
+      context: ./
+      dockerfile: ./microservice-ia/Dockerfile
+    ports:
+      - "8097:8097"
+    environment:
+      EUREKA_URL: http://msvc-eureka:8761/eureka/
+      OLLAMA_URL: ${OLLAMA_URL:-http://host.docker.internal:11434}
+      MSVC_VENTAS_URL: http://msvc-ventas:8095
+      MSVC_CLIENTES_URL: http://msvc-clientes:8093
+      MSVC_INVENTARIOS_URL: http://msvc-inventarios:8094
+      MSVC_NOMINA_URL: http://msvc-nomina:8096
+      MSVC_FACTURACION_URL: http://msvc-facturacion:8092
+    networks:
+      - gasmanager-network
+    depends_on:
+      msvc-eureka:
+        condition: service_started
+    restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # ===== FRONTEND =====
+  frontend:
+    container_name: frontend
+    build:
+      context: ./gasmanager-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    networks:
+      - gasmanager-network
+    depends_on:
+      - msvc-gateway
+      - msvc-eureka
+    restart: always
+
+volumes:
+  gasmanager-data:
+    name: gasmanager-data
+
+networks:
+  gasmanager-network:
+    name: gasmanager-network

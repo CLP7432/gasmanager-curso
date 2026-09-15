@@ -3,12 +3,11 @@ package com.gasmanager.users.controllers;
 import com.gasmanager.users.entities.AuditoriaAccion;
 import com.gasmanager.users.services.AuditoriaService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -25,5 +24,14 @@ public class AuditoriaController {
     @GetMapping("/usuario/{idUsuario}")
     public ResponseEntity<List<AuditoriaAccion>> porUsuario(@PathVariable Long idUsuario){
         return ResponseEntity.ok(auditoriaService.listarPorUsuario(idUsuario));
+    }
+
+    @GetMapping("/rango")
+    public ResponseEntity<List<AuditoriaAccion>> porRango(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime inicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime fin){
+        return ResponseEntity.ok(auditoriaService.listarPorRango(inicio, fin));
     }
 }

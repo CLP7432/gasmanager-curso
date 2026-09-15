@@ -15,12 +15,11 @@ public class ClienteDTO {
 
     private Long id;
 
-    @NotBlank(message = "El código de cliente es obligatorio")
     private String codigoCliente;
 
     @NotNull(message = "El tipo de persona es obligatorio")
     private TipoPersona tipoPersona;
-
+    private String nombre;
     private String razonSocial;
     private String nombreComercial;
 

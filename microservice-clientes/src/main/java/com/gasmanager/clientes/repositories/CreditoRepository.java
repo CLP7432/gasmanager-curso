@@ -21,6 +21,6 @@ public interface CreditoRepository extends JpaRepository<Credito, Long> {
 
     List<Credito> findByFechaVencimientoBeforeAndEstado(LocalDate fecha, EstadoCredito estado);
 
-    @Query("select c from Credito c where c.saldoPendiente > 0 and c.estado= 'ACTIVO'")
+    @Query("select c from Credito c where c.saldoPendiente > 0 and c.estado = 'ACTIVO' and (c.fechaVencimiento is null or c.fechaVencimiento >= CURRENT_DATE) order by c.cliente.razonSocial")
     List<Credito> findCreditosActivosConSaldo();
 }

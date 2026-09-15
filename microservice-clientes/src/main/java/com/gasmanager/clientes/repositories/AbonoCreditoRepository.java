@@ -16,6 +16,8 @@ public interface AbonoCreditoRepository extends JpaRepository<AbonoCredito, Long
 
     List<AbonoCredito> findByCreditoIdOrderByFechaAbonoDesc(Long creditoId);
 
+    List<AbonoCredito> findAllByOrderByFechaAbonoDesc();
+
 }
 
 
