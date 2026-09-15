@@ -36,3 +36,6 @@ build/
 facturadas/
 *.rar
 .env
+
+# Notas locales de trabajo
+TUTORIAL_PROGRESO.md
